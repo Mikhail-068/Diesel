@@ -1,7 +1,5 @@
-from typing import List
-
 import pymysql
-from config import *
+from config import host, user, password, name
 
 connection = pymysql.connect(
     host=host,
@@ -121,8 +119,6 @@ def users():
                        cash, (' ' * (max(cash_list) - len(cash))), '   |')
         print('+','-' * (total_len+1), '+', sep='')
 
-
-
 def garage():
     id_list = []
     date_list = []
@@ -150,27 +146,120 @@ def garage():
     # # Keys
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM garage")
-        print('=' * 15, 'G A R A G E', '=' * 16)
-        print('+','-' * (total_len+8), '+', sep='')
+        print('=' * 16, 'G A R A G E', '=' * 17)
+        print('+','-' * (total_len+10), '+', sep='')
         for i in cur:
             pass
         id, date_, liters, id_driver = [s for s in i.keys()]
         print('|', id, (' ' * (max(id_list) - len(id))), '|',
               date_, (' ' * (max(date_list) - len(date_))), '|',
               liters, (' ' * (max(liters_list) - len(liters))), '|',
-              id_driver, (' ' * (max(id_driver_list) - len(id_driver))), '|')
+              id_driver, ' ' * 2, '|')
     #
     # # Values
+    surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
+                   'Пустынников,Назин'.split(',')
+    len_surnames = [len(i) for i in surnames]
+
+
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM garage")
         lv = [stroka(i.values()) for i in cur]
-        print('+','-' * (total_len+8), '+', sep='')
+        print('+','-' * (total_len+10), '+', sep='')
         for i in lv:
             id, date_, liters, id_driver = i
             print('|', id, (' ' * (max(id_list) - len(id))), '|',
                   date_, (' ' * (max(date_list) - len(date_))), '|',
                   liters, (' ' * ((max(liters_list) - len(liters))+3)), '|',
-                  id_driver, (' ' * ((max(id_driver_list) - len(id_driver))+7)), '|')
-        print('+','-' * (total_len+8), '+', sep='')
-users()
+                  surnames[int(id_driver)-1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver)-1])))), '|')
+        print('+','-' * (total_len+10), '+', sep='')
+
+def add_users():
+    print('=== USERS ===')
+    s = input('Surname: ').capitalize()
+    surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
+               'Пустынников,Назин'.split(',')
+    id_surnames = [i+1 for i in range(len(surnames)) if s in surnames[i]]
+    money = input('Cash: ')
+
+
+    with connection.cursor() as cur:
+        cur.execute(f"UPDATE users SET cash = {money} WHERE id = {id_surnames[0]}")
+        connection.commit()
+
+def add_garage():
+    print('=== GARAGE ===')
+    date_ = input('Date: ')
+    s = input('Surname: ').capitalize()
+    surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
+               'Пустынников,Назин'.split(',')
+    id_surnames = [i+1 for i in range(len(surnames)) if s in surnames[i]]
+    id_ = id_surnames[0]
+    liters = int(input('Liters: '))
+
+    with connection.cursor() as cur:
+        cur.execute(f"INSERT INTO garage (date_, liters, id_driver) VALUES"
+                    f"('{date_}', {liters}, {id_})")
+        connection.commit()
+
+def condition():
+    # dt1, dt2 = input('Введите дату c ... по ...:').split(',')
+
+    id_list = []
+    date_list = []
+    liters_list = []
+    id_driver_list = []
+    with connection.cursor() as cur:
+        cur.execute("SELECT * FROM garage")
+        lv = [stroka(i.values()) for i in cur]
+        for i in lv: # Посчитали самое длинное слово
+            id, date_, liters, id_driver = i
+            id_list.append(len(id))
+            date_list.append(len(date_))
+            liters_list.append(len(liters))
+            id_driver_list.append(len(id_driver))
+
+        # Посчитали общую длину
+        cur.execute('SHOW COLUMNS FROM garage')
+        for s in cur:
+            c = ','.join(list(('|', id, (' ' * (max(id_list) - len(id))), '|',
+                               date_, (' ' * (max(date_list) - len(date_))), '|',
+                               liters, (' ' * (max(liters_list) - len(liters))), '|',
+                               id_driver, (' ' * (max(id_driver_list) - len(id_driver))), '|')))
+        total_len = len(c)
+
+    # # Keys
+    with connection.cursor() as cur:
+        cur.execute("SELECT date_ as 'Дата', liters as 'Литры', id_driver as 'Фамилия' FROM garage")
+        print('=' * 11, 'ВЫБОРКА ПО ДАТЕ', '=' * 12)
+        print('+','-' * (total_len+4), '+', sep='')
+        for i in cur:
+            pass
+        date_, liters, id_driver = [s for s in i.keys()]
+        print('|', date_, (' ' * (max(date_list) - len(date_))), '|',
+              liters, (' ' * 1), '|',
+              id_driver, ' ' * 4, '|')
+    #
+    # # Values
+    surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
+               'Пустынников,Назин'.split(',')
+    len_surnames = [len(i) for i in surnames]
+
+
+    with connection.cursor() as cur:
+        cur.execute(f'SELECT date_, liters, id_driver FROM `garage`'
+                    f'WHERE garage.date_ >= "2021-10-01" AND garage.date_ <= "2021-11-01"')
+        lv = [stroka(i.values()) for i in cur]
+        print('+','-' * (total_len+4), '+', sep='')
+        for i in lv:
+            date_, liters, id_driver = i
+            print('|', date_, (' ' * (max(date_list) - len(date_))), '|',
+                  liters, (' ' * ((max(liters_list) - len(liters))+3)), '|',
+                  surnames[int(id_driver)-1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver)-1])))), '|')
+        print('+','-' * (total_len+4), '+', sep='')
+
+
+
+
+condition()
 garage()
