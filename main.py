@@ -18,23 +18,16 @@ with connection.cursor() as cur:
                 "PRIMARY KEY(id)"
                 ")")
 
+
 # Добавили данные в таблицу users
 # with connection.cursor() as cur:
 #     for i in range(len(surnames)):
 #         cur.execute("INSERT INTO `users`(surname) VALUES(%s)", (surnames[i]))
 #         connection.commit()
 
-# Показать таблицу
-def show(table):
-    with connection.cursor() as cur:
-        cur.execute(f'SELECT * FROM {table}')
-        for val in cur:
-            print(val)
-# Удалить таблицу
 def del_table(table):
     with connection.cursor() as cur:
         cur.execute(f"DROP TABLE {table}")
-
 def columns_table(table):
     with connection.cursor() as cur:
         cur.execute(f'SHOW COLUMNS FROM {table}')
@@ -60,8 +53,6 @@ def columns_table(table):
             print('|', i[key_[0]], (' ' * (max(a) - len(i[key_[0]]))), '|', i[key_[1]],
                   (' ' * (max(b) - len(i[key_[1]]))), '|')
         print('-' * total_len)
-
-
 def show_tables():
     with connection.cursor() as cur:
         cur.execute("SHOW TABLES")
@@ -69,11 +60,9 @@ def show_tables():
         for i in val:
             print('Table:', i)
             columns_table(i)
-
 def stroka(arg):
     b = [str(i) for i in arg]
     return b
-
 def users():
     id_list = []
     surname_list = []
@@ -81,7 +70,7 @@ def users():
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM users")
         lv = [stroka(i.values()) for i in cur]
-        for i in lv: # Посчитали самое длинное слово
+        for i in lv:  # Посчитали самое длинное слово
             id, surname, cash = i
             id_list.append(len(id))
             surname_list.append(len(surname))
@@ -91,15 +80,15 @@ def users():
         cur.execute('SHOW COLUMNS FROM users')
         for s in cur:
             c = ','.join(list(('|', id, (' ' * (max(id_list) - len(id))), '|',
-                       surname, (' ' * (max(surname_list) - len(surname))), '|',
-                       cash, (' ' * (max(cash_list) - len(cash))), '|')))
+                               surname, (' ' * (max(surname_list) - len(surname))), '|',
+                               cash, (' ' * (max(cash_list) - len(cash))), '|')))
         total_len = len(c)
 
     # Keys
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM users")
         print('=' * 9, 'U S E R S', '=' * 10)
-        print('+','-' * (total_len+1), '+', sep='')
+        print('+', '-' * (total_len + 1), '+', sep='')
         for i in cur:
             pass
         id, surname, cash = [s for s in i.keys()]
@@ -111,14 +100,13 @@ def users():
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM users")
         lv = [stroka(i.values()) for i in cur]
-        print('+','-' * (total_len+1), '+', sep='')
+        print('+', '-' * (total_len + 1), '+', sep='')
         for i in lv:
             id, surname, cash = i
             print('|', id, (' ' * (max(id_list) - len(id))), '|',
-                       surname, (' ' * (max(surname_list) - len(surname))), '|',
-                       cash, (' ' * (max(cash_list) - len(cash))), '   |')
-        print('+','-' * (total_len+1), '+', sep='')
-
+                  surname, (' ' * (max(surname_list) - len(surname))), '|',
+                  cash, (' ' * (max(cash_list) - len(cash))), '   |')
+        print('+', '-' * (total_len + 1), '+', sep='')
 def garage():
     id_list = []
     date_list = []
@@ -127,7 +115,7 @@ def garage():
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM garage")
         lv = [stroka(i.values()) for i in cur]
-        for i in lv: # Посчитали самое длинное слово
+        for i in lv:  # Посчитали самое длинное слово
             id, date_, liters, id_driver = i
             id_list.append(len(id))
             date_list.append(len(date_))
@@ -147,7 +135,7 @@ def garage():
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM garage")
         print('=' * 16, 'G A R A G E', '=' * 17)
-        print('+','-' * (total_len+10), '+', sep='')
+        print('+', '-' * (total_len + 10), '+', sep='')
         for i in cur:
             pass
         id, date_, liters, id_driver = [s for s in i.keys()]
@@ -158,42 +146,38 @@ def garage():
     #
     # # Values
     surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
-                   'Пустынников,Назин'.split(',')
+               'Пустынников,Назин'.split(',')
     len_surnames = [len(i) for i in surnames]
-
 
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM garage")
         lv = [stroka(i.values()) for i in cur]
-        print('+','-' * (total_len+10), '+', sep='')
+        print('+', '-' * (total_len + 10), '+', sep='')
         for i in lv:
             id, date_, liters, id_driver = i
             print('|', id, (' ' * (max(id_list) - len(id))), '|',
                   date_, (' ' * (max(date_list) - len(date_))), '|',
-                  liters, (' ' * ((max(liters_list) - len(liters))+3)), '|',
-                  surnames[int(id_driver)-1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver)-1])))), '|')
-        print('+','-' * (total_len+10), '+', sep='')
-
+                  liters, (' ' * ((max(liters_list) - len(liters)) + 3)), '|',
+                  surnames[int(id_driver) - 1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver) - 1])))), '|')
+        print('+', '-' * (total_len + 10), '+', sep='')
 def add_users():
     print('=== USERS ===')
     s = input('Surname: ').capitalize()
     surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
                'Пустынников,Назин'.split(',')
-    id_surnames = [i+1 for i in range(len(surnames)) if s in surnames[i]]
+    id_surnames = [i + 1 for i in range(len(surnames)) if s in surnames[i]]
     money = input('Cash: ')
-
 
     with connection.cursor() as cur:
         cur.execute(f"UPDATE users SET cash = {money} WHERE id = {id_surnames[0]}")
         connection.commit()
-
 def add_garage():
     print('=== GARAGE ===')
     date_ = input('Date: ')
     s = input('Surname: ').capitalize()
     surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
                'Пустынников,Назин'.split(',')
-    id_surnames = [i+1 for i in range(len(surnames)) if s in surnames[i]]
+    id_surnames = [i + 1 for i in range(len(surnames)) if s in surnames[i]]
     id_ = id_surnames[0]
     liters = int(input('Liters: '))
 
@@ -201,9 +185,8 @@ def add_garage():
         cur.execute(f"INSERT INTO garage (date_, liters, id_driver) VALUES"
                     f"('{date_}', {liters}, {id_})")
         connection.commit()
-
 def condition():
-    # dt1, dt2 = input('Введите дату c ... по ...:').split(',')
+    dt1, dt2 = input('Введите дату c ... по ...:').split(',')
 
     id_list = []
     date_list = []
@@ -212,7 +195,7 @@ def condition():
     with connection.cursor() as cur:
         cur.execute("SELECT * FROM garage")
         lv = [stroka(i.values()) for i in cur]
-        for i in lv: # Посчитали самое длинное слово
+        for i in lv:  # Посчитали самое длинное слово
             id, date_, liters, id_driver = i
             id_list.append(len(id))
             date_list.append(len(date_))
@@ -232,7 +215,7 @@ def condition():
     with connection.cursor() as cur:
         cur.execute("SELECT date_ as 'Дата', liters as 'Литры', id_driver as 'Фамилия' FROM garage")
         print('=' * 11, 'ВЫБОРКА ПО ДАТЕ', '=' * 12)
-        print('+','-' * (total_len+4), '+', sep='')
+        print('+', '-' * (total_len + 4), '+', sep='')
         for i in cur:
             pass
         date_, liters, id_driver = [s for s in i.keys()]
@@ -244,22 +227,88 @@ def condition():
     surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
                'Пустынников,Назин'.split(',')
     len_surnames = [len(i) for i in surnames]
-
-
+    data2 = f'SELECT id_driver as "Фамилия",' \
+            f'SUM(liters) as "Сумма", COUNT(liters) as "Кол-во раз" FROM `garage`' \
+            f'WHERE garage.date_ >= "{dt1}" AND garage.date_ <= "{dt2}"' \
+            f'GROUP BY id_driver'
     with connection.cursor() as cur:
-        cur.execute(f'SELECT date_, liters, id_driver FROM `garage`'
-                    f'WHERE garage.date_ >= "2021-10-01" AND garage.date_ <= "2021-11-01"')
+        cur.execute(data2)
+    lv = [stroka(i.values()) for i in cur]
+    print('+', '-' * (total_len + 4), '+', sep='')
+    for i in lv:
+        id_driver, Summa2, Count2 = i
+
+        cc = len(','.join(
+            ('|', surnames[int(id_driver) - 1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver) - 1])))), '|',
+             Summa2, (' ' * (len("Cумма") - len(Summa2) - 1)), '|',
+             Count2, (' ' * (len("Кол-во раз") - len(Count2) - 1)), '|')))
+
+    data1 = f'SELECT date_, liters, id_driver FROM `garage`' \
+            f'WHERE garage.date_ >= "{dt1}" AND garage.date_ <= "{dt2}"'
+    with connection.cursor() as cur:
+        cur.execute(data1)
         lv = [stroka(i.values()) for i in cur]
-        print('+','-' * (total_len+4), '+', sep='')
+        print('+', '-' * (total_len + 4), '+', sep='')
         for i in lv:
             date_, liters, id_driver = i
+
             print('|', date_, (' ' * (max(date_list) - len(date_))), '|',
-                  liters, (' ' * ((max(liters_list) - len(liters))+3)), '|',
-                  surnames[int(id_driver)-1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver)-1])))), '|')
-        print('+','-' * (total_len+4), '+', sep='')
+                  liters, (' ' * ((max(liters_list) - len(liters)) + 3)), '|',
+                  surnames[int(id_driver) - 1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver) - 1])))), '|')
+        print('+', '-' * (total_len + 4), '+', sep='')
+        print()
+        cur.execute(data2)
+    # Длина
+    id_driver_list = []
+    sum_list = []
+    count_list = []
+    with connection.cursor() as cur:
+        cur.execute(data2)
+        lv = [stroka(i.values()) for i in cur]
+        for i in lv:  # Посчитали самое длинное слово
+            id_driver, sum_, count_ = i
+            id_driver_list.append(len(id_driver))
+            sum_list.append(len(sum_))
+            count_list.append(len(count_))
 
+        # Посчитали общую длину
+        cur.execute(data2)
+        for s in cur:
+            c = ','.join(list(('|', id_driver, (' ' * (max(id_driver_list) - len(id_driver))), '|',
+                               sum_, (' ' * (max(sum_list) - len(sum_))), '|',
+                               count_, (' ' * (max(count_list) - len(count_))), '|')))
+        total_len = len(c)
 
+        # Keys
+        print('=' * 15, 'Итого', '=' * 15)
+        print('+', '-' * (cc - 2), '+', sep='')
+        with connection.cursor() as cur:
+            cur.execute(data2)
+            for i in cur:
+                pass
+            id_driver, Summa, Count = [s for s in i.keys()]
+            print('|', id_driver, (' ' * (max(len_surnames) - len(id_driver))), '|',
+                  Summa, '|',
+                  Count, '|')
+
+    # Values
+    surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
+               'Пустынников,Назин'.split(',')
+    len_surnames = [len(i) for i in surnames]
+
+    with connection.cursor() as cur:
+        cur.execute(data2)
+        lv = [stroka(i.values()) for i in cur]
+        print('+', '-' * (cc - 2), '+', sep='')
+        for i in lv:
+            id_driver, Summa2, Count2 = i
+
+            print('|', surnames[int(id_driver) - 1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver) - 1])))),
+                  '|',
+                  Summa2, (' ' * (len("Cумма") - len(Summa2) - 1)), '|',
+                  Count2, (' ' * (len("Кол-во раз") - len(Count2) - 1)), '|')
+
+        print('+', '-' * (cc - 2), '+', sep='')
 
 
 condition()
-garage()
