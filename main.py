@@ -1,5 +1,6 @@
 import pymysql
 from config import host, user, password, name
+import sqlite3
 
 connection = pymysql.connect(
     host=host,
@@ -8,6 +9,7 @@ connection = pymysql.connect(
     database=name,
     cursorclass=pymysql.cursors.DictCursor
 )
+connection2 = sqlite3.connect('business.db')
 
 class diesel_base():
     def del_table(self, table):
@@ -105,47 +107,57 @@ class diesel_base():
                 id_driver_list.append(len(id_driver))
 
             # Посчитали общую длину
+            surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
+                           'Пустынников,Назин'.split(',')
+
+            cur.execute("SELECT DISTINCT id_driver FROM garage")
+            list_val = []
+            for i in cur:
+                list_val.append(len(surnames[list(i.values())[0]-1]))
             cur.execute('SHOW COLUMNS FROM garage')
             for s in cur:
                 c = ','.join(list(('|', id2, (' ' * (max(id_list) - len(id2))), '|',
                                    date_, (' ' * (max(date_list) - len(date_))), '|',
-                                   liters, (' ' * (max(liters_list) - len(liters))), '|',
-                                   id_driver, (' ' * (max(id_driver_list) - len(id_driver))), '|')))
+                                   liters, (' ' * ((max(liters_list) - len(liters)) + 3)), '|',
+                                   surnames[int(id_driver) - 1], (' ' * (max(list_val) - len(surnames[int(id_driver) - 1]))))))
+
+
+
             total_len = len(c)
 
         # # Keys
-        surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
-                       'Пустынников,Назин'.split(',')
+
         len_surnames = [len(i) for i in surnames]
         with connection.cursor() as cur:
             cur.execute("SELECT * FROM garage")
-            cnt = int(total_len / 2)
-            print('=' * cnt, 'G A R A G E', '=' * cnt)
-            print('+', '-' * (total_len + 10), '+', sep='')
+            print('=' , 'G A R A G E', '=' )
+            print('+', '-' * (total_len), '+', sep='')
             for i in cur:
                 pass
             id1, date_, liters, id_driver = [s for s in i.keys()]
-            print('|', id1,  '|',
+            print('|', id1, '',   '|',
                   date_, (' ' * (max(date_list) - len(date_))), '|',
-                  liters,  '|',
-                  id_driver, (' ' * (max(len_surnames) - len('id_driver')-1)), '|')
+                  liters, '', '|',
+                  id_driver,  '|')
 
         # Values
-        surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
-                   'Пустынников,Назин'.split(',')
-        len_surnames = [len(i) for i in surnames]
+        with connection.cursor() as cur:
+            cur.execute("SELECT DISTINCT id_driver FROM garage")
+            list_val = []
+            for i in cur:
+                list_val.append(len(surnames[list(i.values())[0]-1]))
 
         with connection.cursor() as cur:
             cur.execute("SELECT * FROM garage")
             lv = [[str(i) for i in(i.values())] for i in cur]
-            print('+', '-' * (total_len + 10), '+', sep='')
+            print('+', '-' * (total_len), '+', sep='')
             for i in lv:
                 id2, date_, liters, id_driver = i
-                print('|', id2, (' ' * (max(id_list) - len(id1))), '|',
+                print('|', id2, (' ' * (max(id_list) - len(id2))), '|',
                       date_, (' ' * (max(date_list) - len(date_))), '|',
                       liters, (' ' * ((max(liters_list) - len(liters)) + 3)), '|',
-                      surnames[int(id_driver) - 1], (' ' * ((max(len_surnames) - len(surnames[int(id_driver)])-1))), '|')
-            print('+', '-' * (total_len + 10), '+', sep='')
+                      surnames[int(id_driver) - 1], (' ' * (max(list_val) - len(surnames[int(id_driver) - 1]))), '|')
+            print('+', '-' * (total_len), '+', sep='')
     def add_users(self):
         print('=== USERS ===')
         s = input('Surname: ').capitalize()
@@ -167,10 +179,32 @@ class diesel_base():
         id_ = id_surnames[0]
         liters = int(input('Liters: '))
 
+# Добавляем в MySQL
         with connection.cursor() as cur:
             cur.execute(f"INSERT INTO garage (date_, liters, id_driver) VALUES"
                         f"('{date_}', {liters}, {id_})")
             connection.commit()
+
+# Добавляем в SQLite
+        cur2 = connection2.cursor()
+        surname = s
+
+        cur2.execute('SELECT id FROM garage')
+        for i in cur2:
+            pass
+        id_ = (int(i[0]) + 1)
+
+        for i, v in enumerate(surnames):
+            if surname in v:
+                id_driver = i+1
+
+        cur2.execute(f"INSERT INTO garage(id, Дата, Фамилия, Литры, id_driver)"
+                    f" VALUES ({id_}, '{date_}', '{surname}', {liters}, {id_driver})")
+
+        connection2.commit()
+        connection2.close()
+
+
     def condition(self):
         dt1, dt2 = input('Введите дату c ... по ...:').split(',')
 
@@ -297,4 +331,4 @@ class diesel_base():
             print('+', '-' * (cc - 2), '+', sep='')
 
 b = diesel_base()
-b.condition()
+
