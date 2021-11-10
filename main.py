@@ -118,7 +118,7 @@ class diesel_base():
             for s in cur:
                 c = ','.join(list(('|', id2, (' ' * (max(id_list) - len(id2))), '|',
                                    date_, (' ' * (max(date_list) - len(date_))), '|',
-                                   liters, (' ' * ((max(liters_list) - len(liters)) + 3)), '|',
+                                   liters, (' ' * ((max(liters_list) - len(liters))+3)), '|',
                                    surnames[int(id_driver) - 1], (' ' * (max(list_val) - len(surnames[int(id_driver) - 1]))))))
 
 
@@ -137,7 +137,7 @@ class diesel_base():
             id1, date_, liters, id_driver = [s for s in i.keys()]
             print('|', id1, '',   '|',
                   date_, (' ' * (max(date_list) - len(date_))), '|',
-                  liters, '', '|',
+                  liters, '|',
                   id_driver,  '|')
 
         # Values
