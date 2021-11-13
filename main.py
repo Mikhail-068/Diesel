@@ -170,6 +170,7 @@ class diesel_base():
             cur.execute(f"UPDATE users SET cash = {money} WHERE id = {id_surnames[0]}")
             connection.commit()
     def add_garage(self):
+
         print('=== GARAGE ===')
         date_ = input('Date: ')
         s = input('Surname: ').capitalize()
@@ -203,6 +204,15 @@ class diesel_base():
 
         connection2.commit()
         connection2.close()
+
+    def add_reset(self):
+        dateReset = input('Дата сброса: ')
+        litrReset = int(input('Сколько литров ДТ сдали: '))
+        Name = input('Введите имя кому сдали ДТ: ')
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO reset(DateReset, LitresReset, Name)' \
+                        ' VALUES (%s, %s, %s)', (dateReset, litrReset, Name))
+            connection.commit()
 
 
     def condition(self):
@@ -329,6 +339,12 @@ class diesel_base():
                       Count2, (' ' * (len("Кол-во раз") - len(Count2) - 1)), '|')
 
             print('+', '-' * (cc - 2), '+', sep='')
+
+    def show_reset(self):
+        with connection.cursor() as cur:
+            cur.execute('SELECT * FROM reset')
+            for i in cur:
+                print(i.values())
 
 b = diesel_base()
 

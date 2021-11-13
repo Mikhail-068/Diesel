@@ -1,5 +1,7 @@
 import pymysql
 import sqlite3
 from main import *
+b = diesel_base()
 
-b.condition()
+
+b.show_reset()
