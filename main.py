@@ -340,11 +340,34 @@ class diesel_base():
 
             print('+', '-' * (cc - 2), '+', sep='')
 
-    def show_reset(self):
+    def reset(self):
         with connection.cursor() as cur:
             cur.execute('SELECT * FROM reset')
+            print('= R E S E T =')
+            print('-' * (len('DateReset  | LitresReset | Name')+2))
             for i in cur:
-                print(i.values())
+                pass
+            id_key, date_key, litr_key, name_key =i.keys()
+            print(date_key, ' |', litr_key, '|', name_key)
+            print('-' * (len('DateReset  | LitresReset | Name')+2))
 
-b = diesel_base()
+        with connection.cursor() as cur:
+            cur.execute('SELECT * FROM reset')
+            # for i in cur:
+            #     print(i.values())
+            date_val = []
+            litr_val = []
+            name_val = []
+            lv = [[str(i) for i in(i.values())] for i in cur]
+            for i in range(len(lv)):
+                date_val.append(lv[i][1])
+                litr_val.append(lv[i][2])
+                name_val.append(lv[i][3])
+            for i in range(len(lv)):
+                print(date_val[i], '|',
+                      litr_val[i], (' '*(len('LitresReset')-len(litr_val[i])-1)),
+                      '|', name_val[i])
+
+
+
 
