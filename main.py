@@ -368,6 +368,8 @@ class diesel_base():
                       litr_val[i], (' '*(len('LitresReset')-len(litr_val[i])-1)),
                       '|', name_val[i])
 
-
-
+# UPDATE
+# with connection.cursor() as cur:
+#     cur.execute('UPDATE reset SET DateReset="2021-12-05" where id="6"')
+#     connection.commit()
 
