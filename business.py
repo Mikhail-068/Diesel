@@ -4,6 +4,5 @@ from main import *
 
 b = diesel_base()
 
-b.add_garage()
-b.garage()
-
+b.add_users()
+b.users()
