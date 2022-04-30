@@ -11,6 +11,18 @@ connection = pymysql.connect(
 )
 connection2 = sqlite3.connect('business.db')
 
+#         with connection.cursor() as cur:
+#             cur.execute("SELECT * FROM garage")
+
+# with connection.cursor() as cur:
+#     cur.execute("SELECT * FROM reset")
+#     sum_ = 0
+#     for i in cur:
+#         # print(i['LitresReset'])
+#         sum_ += i['LitresReset']
+#
+#     print(sum_)
+
 class diesel_base():
     def del_table(self, table):
         with connection.cursor() as cur:
@@ -108,7 +120,7 @@ class diesel_base():
 
             # Посчитали общую длину
             surnames = 'Титов,Алексеев,Савельев,Черкасов,Юрьев,Сажнев,Авилочкин,Дильдин,Усачев,Кизиль,Бирюков,Жирнов,' \
-                           'Пустынников,Назин'.split(',')
+                       'Пустынников,Назин'.split(',')
 
             cur.execute("SELECT DISTINCT id_driver FROM garage")
             list_val = []
@@ -180,13 +192,13 @@ class diesel_base():
         id_ = id_surnames[0]
         liters = int(input('Liters: '))
 
-# Добавляем в MySQL
+        # Добавляем в MySQL
         with connection.cursor() as cur:
             cur.execute(f"INSERT INTO garage (date_, liters, id_driver) VALUES"
                         f"('{date_}', {liters}, {id_})")
             connection.commit()
 
-# Добавляем в SQLite
+        # Добавляем в SQLite
         cur2 = connection2.cursor()
         surname = s
 
@@ -200,7 +212,7 @@ class diesel_base():
                 id_driver = i+1
 
         cur2.execute(f"INSERT INTO garage(id, Дата, Фамилия, Литры, id_driver)"
-                    f" VALUES ({id_}, '{date_}', '{surname}', {liters}, {id_driver})")
+                     f" VALUES ({id_}, '{date_}', '{surname}', {liters}, {id_driver})")
 
         connection2.commit()
         connection2.close()
@@ -371,5 +383,10 @@ class diesel_base():
 # UPDATE
 # with connection.cursor() as cur:
 #     cur.execute('UPDATE reset SET DateReset="2021-12-05" where id="6"')
+#     connection.commit()
+
+# DEL
+# with connection.cursor() as cur:
+#     cur.execute('DELETE from garage where id="52"')
 #     connection.commit()
 
